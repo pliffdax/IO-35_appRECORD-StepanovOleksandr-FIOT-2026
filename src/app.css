@@ -346,6 +346,43 @@ code {
   background: rgba(255, 255, 255, 0.04);
 }
 
+.md table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 14px 0;
+  display: block;
+  overflow-x: auto;
+}
+
+.md th,
+.md td {
+  border: 1px solid var(--paper-border);
+  padding: 10px 12px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.md thead th {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.md tbody tr:nth-child(even) {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.md th:first-child,
+.md td:first-child {
+  white-space: nowrap;
+}
+
+.md table {
+  font-size: 14px;
+}
+
+.md th {
+  font-weight: 600;
+}
+
 .footer {
   padding: 14px 0 26px;
   text-align: center;
