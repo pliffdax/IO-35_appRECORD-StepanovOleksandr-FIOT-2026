@@ -53,12 +53,13 @@
 Для модуля автентифікації реалізовано окремі маршрути:
 - `POST /api/auth/register`
 - `POST /api/auth/login`
+- `POST /api/auth/refresh`
 - `GET /api/auth/me`
 - `PATCH /api/auth/profile`
 - `POST /api/auth/change-password`
 - `POST /api/auth/logout`
 
-Маршрути `me`, `profile`, `change-password` і `logout` є захищеними та вимагають коректний Bearer token.
+Маршрути `me`, `profile` і `change-password` є захищеними та вимагають коректний Bearer token. Окремо реалізовано оновлення короткоживучого `accessToken` через `refreshToken`.
 
 ---
 
@@ -201,14 +202,44 @@ export async function requireAuth(request: FastifyRequest, reply: FastifyReply) 
 }
 ```
 
-### 4.8 Робота з профілем і паролем
+### 4.8 Оновлення access token
+В актуальній реалізації `accessToken` використовується як короткоживучий токен доступу, а довша сесія підтримується через `refreshToken`, який зберігається в cookie. Після успішної реєстрації або входу backend не лише повертає `accessToken`, а й створює окрему refresh-сесію.
+
+```ts
+const refreshToken = await issueRefreshSession(user.id);
+setRefreshTokenCookie(reply, refreshToken);
+
+return reply.status(201).send({
+  data: {
+    accessToken: createAccessToken(user),
+    user,
+  },
+});
+```
+
+Для оновлення доступу реалізовано маршрут `POST /api/auth/refresh`. Він читає `refreshToken` з cookie, перевіряє сесію, ротує refresh-токен і повертає новий `accessToken`.
+
+```ts
+app.post("/auth/refresh", async (request, reply) => {
+  const refreshToken = getRefreshToken(request);
+
+  if (!refreshToken) {
+    clearRefreshTokenCookie(reply);
+    return reply.status(401).send({ message: "refresh token is required" });
+  }
+});
+```
+
+Такий підхід зменшує час життя `accessToken` у клієнта та робить сесію більш керованою, оскільки refresh-сесії можна окремо відкликати під час виходу користувача.
+
+### 4.9 Робота з профілем і паролем
 Після автентифікації користувач може:
 - отримати власні дані через `GET /api/auth/me`;
 - оновити ім’я та email через `PATCH /api/auth/profile`;
 - змінити пароль через `POST /api/auth/change-password`;
 - завершити сесію через `POST /api/auth/logout`.
 
-З технічного погляду `logout` у цій реалізації не зберігає стан сесії на сервері, а лише завершує клієнтське використання токена. Для базового лабораторного сценарію цього достатньо, оскільки основний акцент зроблено на механізмі видачі, передавання і перевірки access token.
+Під час `logout` у поточній реалізації відкликається активна refresh-сесія в базі даних і очищується refresh-cookie. Це робить завершення сесії більш коректним, ніж просте видалення токена лише на клієнті.
 
 ---
 
@@ -247,12 +278,12 @@ export function AuthForms({ mode }: { mode: "login" | "register" }) {
 ```
 
 ### 5.2 Збереження сесії на клієнті
-Після успішного входу або реєстрації клієнт зберігає сесію в `localStorage`, а також дублює ключові дані в cookie для middleware-перевірки.
+Після успішного входу або реєстрації клієнт зберігає сесію в `localStorage`, а також дублює ключові дані в cookie для middleware-перевірки. В актуальній версії `accessToken` записується в cookie на короткий час, а окремо використовується `refresh`-cookie.
 
 ```ts
 export function storeSession(session: AuthSession) {
   window.localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(session));
-  setCookie(AUTH_COOKIE_NAME, session.accessToken, 60 * 60 * 8);
+  setCookie(AUTH_COOKIE_NAME, session.accessToken, 60 * 15);
   setCookie(AUTH_ROLE_COOKIE_NAME, session.user.role, 60 * 60 * 8);
   emitAuthChange();
 }
@@ -261,7 +292,8 @@ export function storeSession(session: AuthSession) {
 Такий підхід дозволяє:
 - використовувати токен у запитах до API;
 - швидко визначати факт авторизації на клієнті;
-- виконувати редиректи ще до повного завантаження захищеної сторінки.
+- виконувати редиректи ще до повного завантаження захищеної сторінки;
+- підтримувати короткий час життя `accessToken` без втрати користувацької сесії.
 
 ### 5.3 Захист сторінок через middleware
 На рівні Next.js застосовано middleware, яке не допускає неавторизованого користувача до сторінки профілю та перенаправляє авторизованого користувача зі сторінок входу/реєстрації назад у профіль.
@@ -269,14 +301,15 @@ export function storeSession(session: AuthSession) {
 ```ts
 export function middleware(request: NextRequest) {
   const token = request.cookies.get(AUTH_COOKIE_NAME)?.value;
+  const refreshToken = request.cookies.get(AUTH_REFRESH_COOKIE_NAME)?.value;
   const { pathname } = request.nextUrl;
 
-  if (!token && pathname.startsWith("/profile")) {
+  if (!token && !refreshToken && pathname.startsWith("/profile")) {
     const loginUrl = new URL("/login", request.url);
     return NextResponse.redirect(loginUrl);
   }
 
-  if (token && (pathname.startsWith("/login") || pathname.startsWith("/register"))) {
+  if ((token || refreshToken) && (pathname.startsWith("/login") || pathname.startsWith("/register"))) {
     const profileUrl = new URL("/profile", request.url);
     return NextResponse.redirect(profileUrl);
   }
