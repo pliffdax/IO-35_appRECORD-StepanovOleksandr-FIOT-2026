@@ -1,12 +1,15 @@
 ## 1. Тема, мета, посилання
 
 ### 1.1 Тема
+
 «Документування API за допомогою Swagger. Деплой Node.js-додатку. Підсумковий проєкт: REST API з базою даних та Swagger документацією».
 
 ### 1.2 Мета
+
 Інтегрувати Swagger/OpenAPI-документацію в існуючий backend Helpdesk / Ticket System, описати основні endpoint-и REST API, перевірити API через Swagger UI та підготувати застосунок до production-запуску і деплою.
 
 ### 1.3 Посилання
+
 - Репозиторій власного веб-застосунку (GitHub): [посилання](https://github.com/pliffdax/Helpdesk)
 - Репозиторій звітного HTML-документа (GitHub): [посилання](https://github.com/pliffdax/IO-35_appRECORD-StepanovOleksandr-FIOT-2026)
 - Звітний HTML-документ (Жива сторінка): [посилання](https://pliffdax.github.io/IO-35_appRECORD-StepanovOleksandr-FIOT-2026/)
@@ -16,25 +19,31 @@
 ## 2. Короткі теоретичні відомості
 
 ### 2.1 REST API
+
 REST API — це спосіб організації взаємодії між клієнтом і сервером через HTTP-методи. У проєкті Helpdesk API використовується для роботи з користувачами, категоріями, заявками, авторизацією, завантаженням файлів і моніторингом.
 
 Основні HTTP-методи:
+
 - `GET` — отримання даних;
 - `POST` — створення нового ресурсу;
 - `PATCH` — часткове оновлення;
 - `DELETE` — видалення.
 
 ### 2.2 Swagger та OpenAPI
+
 OpenAPI Specification — це стандарт опису REST API. Він дозволяє формально описати маршрути, параметри, body, відповіді, схеми даних і авторизацію. Swagger UI використовує OpenAPI-документ і на його основі створює web-інтерфейс для перегляду та тестування API.
 
 Для лабораторної роботи використано пакети:
+
 - `@fastify/swagger` — генерація та підключення OpenAPI-документа;
 - `@fastify/swagger-ui` — web-інтерфейс Swagger UI.
 
 ### 2.3 Деплой Node.js-застосунку
+
 Деплой — це публікація backend-застосунку на сервері або хмарній платформі. Для Node.js API потрібно підготувати production-збірку, змінні середовища, підключення до бази даних і команду старту.
 
 У поточному monorepo-проєкті backend уже має production-команди:
+
 - `pnpm --filter @repo/api build`;
 - `pnpm --filter @repo/api start`.
 
@@ -45,7 +54,9 @@ OpenAPI Specification — це стандарт опису REST API. Він до
 ## 3. Реалізований функціонал Lab 6
 
 ### 3.1 Основні сценарії
+
 У межах лабораторної роботи реалізовано:
+
 - OpenAPI 3.0.3 документ для Helpdesk API;
 - Swagger UI за маршрутом `GET /docs`;
 - JSON-специфікацію за маршрутом `GET /docs/json`;
@@ -56,6 +67,7 @@ OpenAPI Specification — це стандарт опису REST API. Він до
 - production-перевірку через `build` і `start`.
 
 ### 3.2 Адаптація під існуючий проєкт
+
 У завданні лабораторної роботи приклади наведено для Express і MySQL. У поточному проєкті backend реалізовано на Fastify, а база даних — PostgreSQL через Prisma ORM. Це не змінює суті лабораторної роботи: API вже є REST API з CRUD-операціями, базою даних і авторизацією, тому Swagger інтегровано без переписування серверної частини.
 
 ---
@@ -63,6 +75,7 @@ OpenAPI Specification — це стандарт опису REST API. Він до
 ## 4. Реалізація Swagger/OpenAPI
 
 ### 4.1 OpenAPI-документ
+
 OpenAPI-специфікацію винесено в окремий файл `apps/api/src/docs/openapi.ts`. У документі описано загальну інформацію про API, сервер, теги, схеми даних і маршрути.
 
 ```ts
@@ -71,7 +84,8 @@ export const openApiDocument = {
   info: {
     title: "Helpdesk API",
     version: "1.0.0",
-    description: "REST API for the Helpdesk / Ticket System laboratory project.",
+    description:
+      "REST API for the Helpdesk / Ticket System laboratory project.",
   },
   servers: [
     {
@@ -85,6 +99,7 @@ export const openApiDocument = {
 Документ містить 10 основних paths, серед яких `/health`, `/status`, `/api/auth/register`, `/api/auth/login`, `/api/auth/me`, `/api/users`, `/api/categories`, `/api/tickets` і `/api/tickets/{id}`.
 
 ### 4.2 Підключення Swagger до Fastify
+
 У файлі `apps/api/src/app.ts` підключено `@fastify/swagger` у static mode та `@fastify/swagger-ui`.
 
 ```ts
@@ -105,11 +120,14 @@ app.register(swaggerUi, {
 ```
 
 Після запуску backend документація доступна за адресами:
+
 - `http://localhost:3001/docs`;
 - `http://localhost:3001/docs/json`.
 
 ### 4.3 Опис моделей даних
+
 У OpenAPI-документі описано основні моделі:
+
 - `User` — користувач системи;
 - `Category` — категорія заявки;
 - `Ticket` — заявка helpdesk-системи;
@@ -129,6 +147,7 @@ User: {
 ```
 
 ### 4.4 Авторизація у Swagger
+
 Для захищених маршрутів додано схему `bearerAuth`.
 
 ```ts
@@ -148,6 +167,7 @@ securitySchemes: {
 ## 5. Перевірка через Swagger UI
 
 Після запуску API потрібно відкрити `http://localhost:3001/docs`. Swagger UI показує список груп endpoint-ів:
+
 - Health;
 - Auth;
 - Users;
@@ -162,10 +182,12 @@ securitySchemes: {
 ## 6. Postman-колекція для перевірки
 
 Для лабораторної роботи підготовлено окрему Postman-колекцію:
+
 - `postman/lab-6/helpdesk_lab6_swagger_collection.json`;
 - `postman/lab-6/helpdesk_lab6_swagger_environment.json`.
 
 Колекція містить такі запити:
+
 - `GET /docs/json - OpenAPI spec`;
 - `GET /health - documented health endpoint`;
 - `GET /api/categories`;
@@ -181,6 +203,7 @@ securitySchemes: {
 ## 7. Production-запуск і деплой
 
 ### 7.1 Production-збірка
+
 Backend збирається командою:
 
 ```bash
@@ -194,7 +217,9 @@ pnpm --filter @repo/api start
 ```
 
 ### 7.2 Змінні середовища
+
 Для production-середовища потрібні:
+
 - `PORT`;
 - `HOST`;
 - `DATABASE_URL`;
@@ -206,7 +231,9 @@ pnpm --filter @repo/api start
 Файл `apps/api/.env.example` уже містить приклад потрібних змінних. Для Render або Railway потрібно перенести ці змінні в налаштування сервісу й підключити PostgreSQL database URL.
 
 ### 7.3 Типові налаштування Render
+
 Для деплою backend API на Render можна використати такі значення:
+
 - Build Command: `pnpm install && pnpm --filter @repo/api build`;
 - Start Command: `pnpm --filter @repo/api start`;
 - Root Directory: `app`;
@@ -218,12 +245,14 @@ pnpm --filter @repo/api start
 ## 8. Команди для запуску
 
 ### 8.1 Запуск інфраструктури
+
 ```bash
 pnpm db:up
 pnpm db:check
 ```
 
 ### 8.2 Підготовка бази
+
 ```bash
 pnpm prisma:generate
 pnpm prisma:push
@@ -231,11 +260,13 @@ pnpm prisma:seed
 ```
 
 ### 8.3 Запуск API
+
 ```bash
 pnpm dev:api
 ```
 
 ### 8.4 Перевірка API, тестів і збірки
+
 ```bash
 pnpm --filter @repo/api lint
 pnpm --filter @repo/api test
@@ -286,9 +317,10 @@ pnpm --filter @repo/api build
 ---
 
 ## 11. Перелік використаних джерел
-1. Документація OpenAPI Specification.  
-2. Документація Swagger UI.  
-3. Документація `@fastify/swagger`.  
-4. Документація `@fastify/swagger-ui`.  
-5. Документація Fastify.  
+
+1. Документація OpenAPI Specification.
+2. Документація Swagger UI.
+3. Документація `@fastify/swagger`.
+4. Документація `@fastify/swagger-ui`.
+5. Документація Fastify.
 6. Документація Render/Railway для деплою Node.js-застосунків.
