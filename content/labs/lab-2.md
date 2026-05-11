@@ -262,79 +262,79 @@ pnpm sql:demo
 
 ## 8. Результати виконання
 
-![](/assets/labs/lab-2/postgres_start_check_logs.png)
+![Запуск і перевірка контейнера PostgreSQL](/assets/labs/lab-2/postgres_start_check_logs.png)
 **Запуск і перевірка контейнера PostgreSQL**  
 Команди `pnpm db:up`, `pnpm db:ps`, `pnpm db:check` та `pnpm db:logs` підтверджують старт контейнера і готовність СУБД до підключення.
 
-![](/assets/labs/lab-2/prisma_generate_success.png)
+![Генерація Prisma Client](/assets/labs/lab-2/prisma_generate_success.png)
 **Генерація Prisma Client**  
 Команда `pnpm prisma:generate` створює клієнт для роботи з PostgreSQL через ORM Prisma.
 
-![](/assets/labs/lab-2/prisma_push_success.png)
+![Синхронізація схеми Prisma з базою даних](/assets/labs/lab-2/prisma_push_success.png)
 **Синхронізація схеми Prisma з базою даних**  
 Команда `pnpm prisma:push` створює або оновлює структуру таблиць відповідно до опису в `schema.prisma`.
 
-![](/assets/labs/lab-2/prisma_seed_success.png)
+![Заповнення бази тестовими даними](/assets/labs/lab-2/prisma_seed_success.png)
 **Заповнення бази тестовими даними**  
 Команда `pnpm prisma:seed` додає початкові записи до таблиць користувачів, категорій і заявок.
 
-![](/assets/labs/lab-2/web_api_running_tmux.png)
+![Одночасний запуск frontend і backend](/assets/labs/lab-2/web_api_running_tmux.png)
 **Одночасний запуск frontend і backend**  
 У tmux-сесії видно окремі процеси для `pnpm dev:web` та `pnpm dev:api`, що підтверджує спільну роботу клієнтської і серверної частин.
 
-![](/assets/labs/lab-2/health_check.png)
+![Перевірка доступності сервера](/assets/labs/lab-2/health_check.png)
 **Перевірка доступності сервера**  
 Маршрут `GET /health` підтверджує, що backend-застосунок запущений і готовий приймати запити.
 
-![](/assets/labs/lab-2/users_get_all.png)
+![Отримання списку користувачів](/assets/labs/lab-2/users_get_all.png)
 **Отримання списку користувачів**  
 Запит `GET /api/users` повертає всі наявні записи з базовими даними користувачів helpdesk-системи.
 
-![](/assets/labs/lab-2/users_post_success.png)
+![Створення нового користувача](/assets/labs/lab-2/users_post_success.png)
 **Створення нового користувача**  
 Маршрут `POST /api/users` успішно додає нового користувача та повертає його ідентифікатор, ім’я, email і роль.
 
-![](/assets/labs/lab-2/categories_get_all.png)
+![Отримання списку категорій](/assets/labs/lab-2/categories_get_all.png)
 **Отримання списку категорій**  
 Запит `GET /api/categories` повертає перелік категорій разом із кількістю пов’язаних заявок.
 
-![](/assets/labs/lab-2/categories_post_success.png)
+![Створення нової категорії](/assets/labs/lab-2/categories_post_success.png)
 **Створення нової категорії**  
 Маршрут `POST /api/categories` успішно додає новий запис до таблиці категорій і повертає створений об’єкт.
 
-![](/assets/labs/lab-2/tickets_get_all.png)
+![Отримання списку заявок](/assets/labs/lab-2/tickets_get_all.png)
 **Отримання списку заявок**  
 Маршрут `GET /api/tickets` повертає всі заявки з інформацією про автора та категорію.
 
-![](/assets/labs/lab-2/tickets_filter_status_open.png)
+![Фільтрація заявок за статусом](/assets/labs/lab-2/tickets_filter_status_open.png)
 **Фільтрація заявок за статусом**  
 Запит `GET /api/tickets?status=OPEN` відбирає заявки у відкритому стані та повертає їх разом із пов’язаними даними.
 
-![](/assets/labs/lab-2/sql_demo_crud_execution.png)
+![Виконання SQL-операцій без ORM](/assets/labs/lab-2/sql_demo_crud_execution.png)
 **Виконання SQL-операцій без ORM**  
 Скрипт `pnpm sql:demo` демонструє послідовне виконання команд `SELECT`, `INSERT`, `UPDATE` і `DELETE` безпосередньо через SQL-запити до PostgreSQL.
 
-![](/assets/labs/lab-2/frontend_tickets_page_full.png)
+![Сторінка перегляду всіх заявок](/assets/labs/lab-2/frontend_tickets_page_full.png)
 **Сторінка перегляду всіх заявок**  
 На сторінці `Заявки` відображено повний список звернень із колонками ідентифікатора, назви, категорії, статусу, пріоритету, автора та дати створення.
 
-![](/assets/labs/lab-2/frontend_tickets_filtered_open.png)
+![Фільтрація заявок у web-інтерфейсі](/assets/labs/lab-2/frontend_tickets_filtered_open.png)
 **Фільтрація заявок у web-інтерфейсі**  
 На сторінці списку застосовано фільтр за статусом `Open`, у результаті чого відображено лише один запис, що відповідає заданій умові.
 
-![](/assets/labs/lab-2/frontend_ticket_create_form.png)
+![Форма створення нової заявки](/assets/labs/lab-2/frontend_ticket_create_form.png)
 **Форма створення нової заявки**  
 Сторінка `Нова заявка` дозволяє ввести назву, вибрати категорію, автора, пріоритет і опис перед відправленням даних до Fastify API.
 
-![](/assets/labs/lab-2/frontend_ticket_detail_update_success.png)
+![Редагування заявки через web-інтерфейс](/assets/labs/lab-2/frontend_ticket_detail_update_success.png)
 **Редагування заявки через web-інтерфейс**  
 На сторінці конкретної заявки показано форму для зміни назви, опису, статусу, пріоритету та категорії, а також повідомлення про успішне збереження змін.
 
-![](/assets/labs/lab-2/frontend_categories_create_filled.png)
+![Створення нової категорії через UI](/assets/labs/lab-2/frontend_categories_create_filled.png)
 **Створення нової категорії через UI**  
 На сторінці `Категорії` показано заповнену форму створення нового запису та оновлений список категорій після додавання нового елемента.
 
-![](/assets/labs/lab-2/frontend_users_create_filled.png)
+![Створення нового користувача через UI](/assets/labs/lab-2/frontend_users_create_filled.png)
 **Створення нового користувача через UI**  
 На сторінці `Користувачі` показано заповнену форму створення користувача та таблицю, до якої додано новий запис після успішного POST-запиту.
 
