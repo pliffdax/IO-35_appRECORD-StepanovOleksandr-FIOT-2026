@@ -13,6 +13,7 @@
 - Репозиторій власного веб-застосунку (GitHub): [посилання](https://github.com/pliffdax/Helpdesk)
 - Репозиторій звітного HTML-документа (GitHub): [посилання](https://github.com/pliffdax/IO-35_appRECORD-StepanovOleksandr-FIOT-2026)
 - Звітний HTML-документ (Жива сторінка): [посилання](https://pliffdax.github.io/IO-35_appRECORD-StepanovOleksandr-FIOT-2026/)
+- Вебзастосунок, розгорнутий на Render (Жива сторінка): [посилання](https://helpdesk-ffxi.onrender.com/)
 
 ---
 
